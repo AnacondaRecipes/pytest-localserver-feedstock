@@ -1,7 +1,6 @@
 {% set name = "pytest-localserver" %}
-{% set version = "0.5.0" %}
-{% set hash_type = "sha256" %}
-{% set hash = "3a5427909d1dfda10772c1bae4b9803679c0a8f04adb66c338ac607773bfefc2" %}
+{% set version = "0.9.0.post0" %}
+{% set hash = "8033a36fb382d2bc4850f9acfe2c3fb5654cd5f0d163af6daf47f290db7d5ff0" %}
 {% set ext = "tar.gz" %}
 
 package:
@@ -10,13 +9,14 @@ package:
 
 source:
   fn: {{ name }}-{{ version }}.{{ ext }}
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.{{ ext }}
-  {{ hash_type }}: {{ hash }}
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/pytest_localserver-{{ version }}.tar.gz
+  sha256: {{ hash }}
 
 build:
   noarch: python
   number: 0
   script: python setup.py install --single-version-externally-managed --record=record.txt
+  skip: true  # [py<36]
 
 requirements:
   build:
@@ -26,6 +26,11 @@ requirements:
     - python
     - pytest
     - werkzeug >=0.10
+  host:
+    - python
+    - setuptools >=42
+    - setuptools-scm >=3.4.1
+    - pip
 
 test:
   requires:
