@@ -1,44 +1,61 @@
 {% set name = "pytest-localserver" %}
-{% set version = "0.5.0" %}
-{% set hash_type = "sha256" %}
-{% set hash = "3a5427909d1dfda10772c1bae4b9803679c0a8f04adb66c338ac607773bfefc2" %}
-{% set ext = "tar.gz" %}
+{% set version = "0.9.0.post0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  fn: {{ name }}-{{ version }}.{{ ext }}
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.{{ ext }}
-  {{ hash_type }}: {{ hash }}
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
+  sha256: 8033a36fb382d2bc4850f9acfe2c3fb5654cd5f0d163af6daf47f290db7d5ff0
 
 build:
-  noarch: python
   number: 0
-  script: python setup.py install --single-version-externally-managed --record=record.txt
+  script_env:
+    - SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: True  # [py<37]
 
 requirements:
   build:
+    - pip
     - python
-    - setuptools
+    - wheel
+    - setuptools >=42
+    - setuptools-scm >=3.4.1
   run:
     - python
-    - pytest
+    - pytest >=2.0.0
     - werkzeug >=0.10
 
 test:
-  requires:
-    - pytest
+  source_files:
+    - tests
   imports:
     - pytest_localserver
   commands:
-    - py.test --help
+    - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -v tests
+  requires:
+    - pip
+    - pytest >=2.0.0
+    - requests
 
 about:
-  home: https://bitbucket.org/pytest-dev/pytest-localserver
+  home: https://github.com/pytest-dev/pytest-localserver
+  summary: pytest plugin to test server connections locally.
   license: MIT
-  summary: pytest-localserver is a plugin for the pytest testing framework which enables you to test server connections locally.
+  license_family: MIT
+  license_file: LICENSE
+  description: |
+    pytest-localserver is a plugin for the pytest testing framework which enables you to test server connections locally.
+
+    Sometimes monkeypatching urllib2.urlopen() just does not cut it, for instance if you work with
+    urllib2.Request, define your own openers/handlers or work with httplib. In these cases it may come in handy to
+    have an HTTP server running locally which behaves just like the real thing [1]. Well, look no further!
+  dev_url: https://github.com/pytest-dev/pytest-localserver
+  doc_url: https://github.com/pytest-dev/pytest-localserver/blob/master/README.rst
 
 extra:
   recipe-maintainers:
