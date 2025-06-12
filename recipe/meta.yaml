@@ -14,7 +14,7 @@ build:
   script_env:
     - SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  skip: True  # [py<37]
+  skip: True  # [py<36]
 
 requirements:
   host:
@@ -39,7 +39,6 @@ test:
     - pytest -v tests
   requires:
     - pip
-    - pytest >=2.0.0
     - requests
 
 about:
