@@ -11,8 +11,6 @@ source:
 
 build:
   number: 0
-  script_env:
-    - SETUPTOOLS_SCM_PRETEND_VERSION={{ version }}
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   skip: true  # [py<37]
 
@@ -24,7 +22,6 @@ requirements:
     - setuptools-scm >=3.4.1
   run:
     - python
-    - pytest >=2.0.0
     - werkzeug >=0.10
 
 test:
@@ -39,6 +36,7 @@ test:
   requires:
     - pip
     - requests
+    - pytest >=2.0.0
 
 about:
   home: https://github.com/pytest-dev/pytest-localserver
